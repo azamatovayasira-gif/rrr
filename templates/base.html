@@ -1,0 +1,33 @@
+{% load static %}<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}anonka{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/night.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <a href="{% url 'home' %}" class="brand"><span class="brand-mark">a</span><span>anonka</span></a>
+    <nav>
+      <a href="{% url 'home' %}">Лента</a><a href="{% url 'map' %}">Карта</a>{% if user.is_authenticated %}<a href="{% url 'chat' %}">Общение</a>{% endif %}<a href="{% url 'contact' %}">Контакты</a>
+    </nav>
+    <div class="top-actions">
+      <button class="theme-toggle" type="button" aria-label="Переключить тему" data-theme-toggle>◐</button>
+      {% if user.is_authenticated %}<a class="identity" href="{% url 'profile' %}">@{{ user.profile.pseudonym }}</a><a class="button button-small button-ghost" href="{% url 'switch_account' %}">Сменить аккаунт</a><a class="button button-small button-ghost" href="{% url 'logout' %}">Выйти</a>{% else %}<a class="button button-small" href="{% url 'login' %}">Войти</a>{% endif %}
+    </div>
+  </header>
+  {% if messages %}<div class="flash-stack">{% for message in messages %}<div class="flash {{ message.tags }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  <main>{% block content %}{% endblock %}</main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>window.mapDataUrl = "{% url 'map_data' %}";</script>
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
