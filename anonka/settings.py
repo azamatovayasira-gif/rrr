@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'dev-only-anonka-secret-key'
 DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver' 'rr-u9bl-a0klp5jbv-yasira-67.vercel.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
