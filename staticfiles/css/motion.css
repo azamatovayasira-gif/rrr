@@ -1,0 +1,146 @@
+/* Motion keeps the dense feed feeling alive without slowing down navigation. */
+body {
+  animation: page-enter .65s ease-out both;
+}
+
+body:before {
+  animation: ambient-drift 18s ease-in-out infinite alternate;
+}
+
+.topbar {
+  transition: background-color .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+
+.topbar:hover {
+  box-shadow: 0 8px 28px rgba(32, 66, 48, .06);
+}
+
+.brand-mark {
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), background-color .25s ease;
+}
+
+.brand:hover .brand-mark {
+  transform: rotate(-12deg) scale(1.08);
+}
+
+.topbar nav a {
+  position: relative;
+  transition: color .2s ease;
+}
+
+.topbar nav a:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -8px;
+  height: 2px;
+  background: var(--green);
+  transition: right .25s ease;
+}
+
+.topbar nav a:hover:after {
+  right: 0;
+}
+
+.button,
+.theme-toggle,
+.post-actions button,
+.file-label,
+.social-button {
+  transition: transform .22s ease, background-color .22s ease, border-color .22s ease, color .22s ease, box-shadow .22s ease;
+}
+
+.button:hover {
+  box-shadow: 0 8px 18px rgba(33, 116, 81, .16);
+}
+
+.theme-toggle:hover {
+  transform: rotate(18deg) scale(1.1);
+}
+
+.hero > div {
+  animation: rise-in .65s ease-out both;
+}
+
+.hero > div:nth-child(2) {
+  animation-delay: .12s;
+}
+
+.status-note .pulse {
+  animation: pulse-ring 2.2s ease-out infinite;
+}
+
+.panel,
+.post {
+  animation: rise-in .55s ease-out both;
+}
+
+.workspace .feed-column > .post:nth-of-type(2) {
+  animation-delay: .08s;
+}
+
+.workspace .feed-column > .post:nth-of-type(3) {
+  animation-delay: .16s;
+}
+
+.workspace .feed-column > .post:nth-of-type(4) {
+  animation-delay: .24s;
+}
+
+.post {
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.post:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+  border-color: color-mix(in srgb, var(--green) 30%, var(--line));
+}
+
+.avatar {
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.post:hover .avatar {
+  transform: scale(1.06);
+  box-shadow: 0 0 0 4px rgba(184, 233, 211, .25);
+}
+
+.image-preview,
+.video-preview,
+.flash {
+  animation: rise-in .3s ease-out both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ambient-drift {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.04) translate3d(-1%, 1%, 0); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(33, 116, 81, .38); }
+  70% { box-shadow: 0 0 0 9px rgba(33, 116, 81, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(33, 116, 81, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}

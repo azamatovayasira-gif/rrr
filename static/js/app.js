@@ -1,6 +1,13 @@
 (() => {
   const toggle = document.querySelector('[data-theme-toggle]');
-  toggle?.addEventListener('click', () => document.body.classList.toggle('night'));
+  const savedTheme = localStorage.getItem('anonka-theme');
+  if (savedTheme === 'night') document.body.classList.add('night');
+  toggle?.setAttribute('aria-pressed', String(document.body.classList.contains('night')));
+  toggle?.addEventListener('click', () => {
+    const isNight = document.body.classList.toggle('night');
+    localStorage.setItem('anonka-theme', isNight ? 'night' : 'day');
+    toggle.setAttribute('aria-pressed', String(isNight));
+  });
 
   const mapElement = document.getElementById('leaflet-map');
   if (mapElement && window.L) {
