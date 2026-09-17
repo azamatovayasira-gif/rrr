@@ -6,8 +6,8 @@ from pathlib import Path
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'dev-only-anonka-secret-key'
-DEBUG = True
+SECRET_KEY = os.getenv('SECRET_KEY', 'dev-only-anonka-secret-key')
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
@@ -88,6 +88,14 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
+if os.getenv('VERCEL'):
+    # Vercel functions do not share the SQLite session database between instances.
+    SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    VERCEL_URL = os.getenv('VERCEL_URL')
+    if VERCEL_URL:
+        CSRF_TRUSTED_ORIGINS = [f'https://{VERCEL_URL}']
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
