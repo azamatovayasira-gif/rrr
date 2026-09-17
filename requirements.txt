@@ -1,3 +1,4 @@
 Django>=6.0,<7.0
 Pillow>=11.0
 django-allauth[socialaccount]>=65.0
+whitenoise>=8.0
