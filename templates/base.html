@@ -29,7 +29,7 @@
   <main>{% block content %}{% endblock %}</main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>window.mapDataUrl = "{% url 'map_data' %}";</script>
-  <script src="{% static 'js/app.js' %}"></script>
+  <script src="{% static 'js/app.js' %}?v=20260917-russian-addresses"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

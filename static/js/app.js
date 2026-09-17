@@ -25,7 +25,47 @@
     const initialRegion = regions[savedRegion] || regions.kyrgyzstan;
     const map = L.map(mapElement, { zoomControl: false }).setView(initialRegion.center, initialRegion.zoom);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap', maxZoom: 19 });
+    const mapCard = mapElement.closest('.standalone-map-card');
+    const addressPanel = document.createElement('section');
+    addressPanel.className = 'address-search panel';
+    addressPanel.innerHTML = '<div class="section-heading"><div><p class="eyebrow">ПОИСК АДРЕСА</p><h2>Страна, город, район, улица</h2></div></div><form id="address-form" class="address-form"><input name="country" placeholder="Страна" value="Кыргызстан"><input name="city" placeholder="Город"><input name="district" placeholder="Район"><input name="street" placeholder="Улица"><button class="button" type="submit">Найти на карте</button></form><div id="address-result" class="address-result">Нажми на карту или введи адрес, чтобы увидеть название места.</div>';
+    mapCard?.insertAdjacentElement('beforebegin', addressPanel);
+    const addressResult = addressPanel.querySelector('#address-result');
+    const showAddress = attributes => {
+      const parts = [attributes.Country, attributes.City, attributes.Subregion, attributes.Neighborhood, attributes.Address].filter(Boolean);
+      addressResult.textContent = parts.length ? parts.join(', ') : 'Адрес не найден.';
+    };
+    const reverseAddress = async (lat, lng) => {
+      addressResult.textContent = 'Определяю адрес...';
+      try {
+        const response = await fetch(`https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${lng},${lat}&langCode=RUS&f=json`);
+        const data = await response.json();
+        showAddress(data.address || {});
+      } catch (error) { addressResult.textContent = 'Не удалось определить адрес.'; }
+    };
+    map.on('click', event => {
+      L.marker(event.latlng).addTo(map).bindPopup('Выбранное место').openPopup();
+      reverseAddress(event.latlng.lat, event.latlng.lng);
+    });
+    addressPanel.querySelector('#address-form')?.addEventListener('submit', async event => {
+      event.preventDefault();
+      const values = new FormData(event.currentTarget);
+      const query = [values.get('country'), values.get('city'), values.get('district'), values.get('street')].filter(Boolean).join(', ');
+      addressResult.textContent = 'Ищу место...';
+      try {
+        const response = await fetch(`https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${encodeURIComponent(query)}&langCode=RUS&outFields=*&f=json`);
+        const data = await response.json();
+        const candidate = data.candidates?.[0];
+        if (!candidate) { addressResult.textContent = 'Место не найдено.'; return; }
+        map.setView([candidate.location.y, candidate.location.x], 15);
+        L.marker([candidate.location.y, candidate.location.x]).addTo(map).bindPopup(candidate.address).openPopup();
+        addressResult.textContent = candidate.address;
+      } catch (error) { addressResult.textContent = 'Поиск адреса временно недоступен.'; }
+    });
+    const tiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri, HERE, Garmin, FAO, NOAA, USGS',
+      maxZoom: 19,
+    });
     let tileErrors = 0;
     tiles.on('tileerror', () => {
       tileErrors += 1;
