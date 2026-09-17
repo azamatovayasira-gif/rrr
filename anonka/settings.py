@@ -82,7 +82,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = Path(tempfile.gettempdir()) / 'anonka-media' if os.getenv('VERCEL') else BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
@@ -94,8 +94,10 @@ if os.getenv('VERCEL'):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     VERCEL_URL = os.getenv('VERCEL_URL')
+    CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app']
     if VERCEL_URL:
-        CSRF_TRUSTED_ORIGINS = [f'https://{VERCEL_URL}']
+        CSRF_TRUSTED_ORIGINS.append(f'https://{VERCEL_URL}')
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
