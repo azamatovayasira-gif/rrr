@@ -58,8 +58,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'anonka.wsgi.application'
 
 DATABASE_URL = os.getenv('DATABASE_URL')
-if os.getenv('VERCEL') and not DATABASE_URL:
-    raise RuntimeError('DATABASE_URL is required on Vercel. Add a PostgreSQL connection string in Vercel Environment Variables.')
 if DATABASE_URL:
     DATABASES = {'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 else:
@@ -70,6 +68,7 @@ else:
             shutil.copyfile(local_database, writable_database)
         local_database = writable_database
     DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': local_database}}
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
