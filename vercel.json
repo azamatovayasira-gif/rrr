@@ -3,21 +3,11 @@
   "builds": [
     {
       "src": "anonka/wsgi.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "build_files.sh",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "staticfiles"
-      }
+      "use": "@vercel/python",
+      "config": { "maxDuration": 90 }
     }
   ],
   "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/$1"
-    },
     {
       "src": "/(.*)",
       "dest": "anonka/wsgi.py"
